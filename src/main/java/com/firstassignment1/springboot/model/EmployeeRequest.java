@@ -26,6 +26,4 @@ public class EmployeeRequest {
     private Date doj;
     private List<EmployeeEducation> educationDetailsList;
     private List<EmployeeExperiance> experianceDetailsList;
-
-
 }

@@ -30,11 +30,9 @@ public class Employee {
     private String mobileNumber;
     private Date doj;
 
-
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
-    private List<EmployeeEducation> educationDetails;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
-    private List<EmployeeExperiance> experianceDetails;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
+//    private List<EmployeeEducation> educationDetails;
+//
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "employee")
+//    private List<EmployeeExperiance> experianceDetails;
 }

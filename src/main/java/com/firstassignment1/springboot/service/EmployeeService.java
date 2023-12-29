@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -21,12 +22,12 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private EmployeeEducationRepository employeeEducationRepository;
+    @Autowired
     private EmployeeExperianceRepository employeeExperianceRepository;
     public Employee createEmployee(EmployeeRequest employeeRequest) {
         // You can add validation or other business logic here
         // return employeeRepository.save(employee);
         Employee emp = new Employee();
-
         emp.setName(employeeRequest.getName());
         emp.setDob(employeeRequest.getDob());
         emp.setCommunicationAddress(employeeRequest.getCommunicationAddress());
@@ -37,44 +38,25 @@ public class EmployeeService {
         emp.setMaritalStatus(employeeRequest.getMaritalStatus());
         emp.setMobileNumber(employeeRequest.getMobileNumber());
         emp.setDoj(employeeRequest.getDoj());
-
-
-/*        List<EmployeeEducation> educationDetails = employeeRequest.getEducationDetailsList();
-        List<EmployeeExperiance> experianceDetails = employeeRequest.getExperianceDetailsList();*/
-
         Optional<Employee> empResponse = Optional.of(employeeRepository.save(emp));
         Long empId = empResponse.get().getEmpId();
+        System.out.println(empId);
         if(empResponse.isPresent()){
-            List<EmployeeEducation> listEmpEdu = employee.getEducationDetailsList();
+            List<EmployeeEducation> listEmpEdu = employeeRequest.getEducationDetailsList();
             if (listEmpEdu != null) {
-                listEmpEdu.stream().map(employeeEducation -> employeeEducationRepository.save(employeeEducation));
+                listEmpEdu.forEach(employeeEducation -> employeeEducation.setEmpId(empId));
+                employeeEducationRepository.saveAll(listEmpEdu);
+//                listEmpEdu = listEmpEdu.stream().map(employeeEducation -> employeeEducationRepository.save(employeeEducation)).collect(Collectors.toList());
+            }
+            List<EmployeeExperiance> listEmpExp = employeeRequest.getExperianceDetailsList();
+            if (listEmpExp != null) {
+                listEmpExp.forEach(employeeExperiance -> employeeExperiance.setEmpId(empId));
+                employeeExperianceRepository.saveAll(listEmpExp);
+//                listEmpExp = listEmpExp.stream().map(employeeExperiance -> employeeExperianceRepository.save(employeeExperiance)).collect(Collectors.toList());
             }
         }
-        if(empResponse.isPresent()){
-            List<EmployeeExperiance> listEmpEdu = employee.getExperianceDetailsList();
-            listEmpEdu.stream().map(employeeExperiance -> employeeExperianceRepository.save(employeeExperiance));
-        }
-        return empResponse;
+        return empResponse.get();
     }
-        /*emp.setEducationDetails(educationDetails);
-        emp.setExperianceDetails(experianceDetails);
-
-        Employee savedEmployee = employeeRepository.save(emp);
-
-        if (educationDetails != null) {
-            for (EmployeeEducation education : educationDetails) {
-                education.setEmployee(savedEmployee);
-                employeeEducationRepository.save(education);
-            }
-        }
-*/
-        /*if (experianceDetails != null) {
-            for (EmployeeExperiance experiance : experianceDetails) {
-                experiance.setEmployee(savedEmployee);
-                employeeExperianceRepository.save(experiance);
-            }
-        }*/
-
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
